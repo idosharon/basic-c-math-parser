@@ -23,7 +23,7 @@ Node* exp_to_tree(char* str)
     char* p = str;
     char c = *p;
 
-    if (c == '-') p++;
+    if (c == '+' || c == '-') p++;
     for (; (c = *p) != '\0'; p++)
     {
         if (c == '+' || c == '-') 
