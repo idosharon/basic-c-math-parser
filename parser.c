@@ -6,7 +6,7 @@
 int is_num(char* s)
 {
     if(*s == SUB ||  *s == ADD) s++;
-    for (; *s != '\0'; s++) if ((isdigit(*s) || *s == DOT) == 0) return 0;
+    for (; *s != '\0'; s++) if ((ISDIGIT(*s) || *s == DOT) == 0) return 0;
     return 1;
 }
 void strtonode(Node* node, char* str, char* p)
@@ -36,7 +36,6 @@ char* end_brackets(char* str)
     // printf("str: %s score: %d\n", str, score);
     return (score == 0) ? str : NULL;
 }
-
 Node* exp_to_tree(char* str)
 {
     Node *node = malloc(sizeof(Node));
@@ -105,8 +104,6 @@ Node* exp_to_tree(char* str)
     };
     return node;
 }
-
-
 double parse_tree(Node* node)
 {
     if (node == NULL) { printf("Syntax Error!\n"); }
@@ -126,4 +123,28 @@ double parse_tree(Node* node)
             return left / right;
     }
     return 0;
+}
+char* preprocess(char* exp) {
+    char* p = exp;
+    char* q = (char*)malloc(strlen(exp)*2 + 1);
+    char* _str = q;
+    char c;
+    for (; (c = *p) != '\0'; p++) {
+        // append * before open bracket and after close bracket
+        if (c == ' ') continue;
+
+        if (c == OPEN_BRACKET && ISDIGIT(*(p-1))) {
+            *q++ = MUL;
+            *q++ = c;
+            continue;
+        }
+        else if (c == CLOSE_BRACKET && ISDIGIT(*(p+1))) {
+            *q++ = c;
+            *q++ = MUL;
+            continue;
+        }
+        *q++ = c;
+    }
+    *q = '\0';
+    return _str;
 }
