@@ -4,9 +4,10 @@
 
 int main(int argc, char **argv) {
 
-	char* expression = "((2*3)+(-1+2))/(82-1)";
+	// super complex expression
+	char* expression = "((4.4*9)/(8-1))/5.5";
 	Node* root = exp_to_tree(expression);
-	Node path = *(root->right->left);
+	Node path = *(root->left);
 	double res = parse_tree(root);
 	printf("%s %c\n", path.exp, path.op);
 	printf("%s = %f\n", expression, res);
