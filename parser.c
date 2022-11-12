@@ -15,7 +15,7 @@ void strtonode(Node* node, char* str, char* p)
     node->exp = str; 
     char* left = strndup(str, p - str);
     char* right = strdup(p + 1);
-    
+
     if(*left=='\0' || *right == '\0') {
         printf("Error: invalid expression\n");
         exit(1);
@@ -88,7 +88,7 @@ Node* exp_to_tree(char* str)
                 strtonode(node, start, (c == '\0') ? temp : end);
                 return node;
             }
-            printf("str: %s\n", strndup(start+1, end-start-2));
+            // printf("str: %s\n", strndup(start+1, end-start-2));
             return exp_to_tree(strndup(start+1, end-start-2));
             
             // if (ISOP(c))

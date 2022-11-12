@@ -11,6 +11,8 @@
 #define isdigit(x) ('0'<=x && x<='9')
 #define NEXTOP(p, c) for (; (c = *p) != '\0' && !(c == ADD || c == SUB); p++);
 
+#define MAXLEN 100
+
 typedef struct Node Node;
 
 Node* exp_to_tree(char* str);
