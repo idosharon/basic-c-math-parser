@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "log.h"
 
 int is_num(char* s)
 {
@@ -17,8 +18,7 @@ void strtonode(Node* node, char* str, char* p)
     char* right = strdup(p + 1);
 
     if(*left=='\0' || *right == '\0') {
-        printf("Error: invalid expression\n");
-        exit(1);
+        error("Invalid expression");
     }
 
     node->left = exp_to_tree(left);
@@ -76,8 +76,7 @@ Node* exp_to_tree(char* str)
             char* end = end_brackets(p);
             
             if (end == NULL) {
-                printf("Error: brackets are not balanced: %s\n", str);
-                exit(1);
+                error("Brackets are not balanced");
             }
             
             end++;
@@ -106,7 +105,9 @@ Node* exp_to_tree(char* str)
 }
 double parse_tree(Node* node)
 {
-    if (node == NULL) { printf("Syntax Error!\n"); }
+    if (node == NULL) { 
+        error("Syntax error!"); 
+    }
     if (node->op == '\0')
         return atof(node->exp);
     double left = parse_tree(node->left);
@@ -125,17 +126,50 @@ double parse_tree(Node* node)
     return 0;
 }
 char* preprocess(char* exp) {
+    status("Preprocessing expression");
     char* p = exp;
-    char* q = (char*)malloc(strlen(exp)*2 + 1);
+    char* q = (char*)malloc(strlen(exp) + 1);
     char* _str = q;
+    int brackets_fill_num = 0;
+    int _found_spaces = 0;
     char c;
     for (; (c = *p) != '\0'; p++) {
-        // append * before open bracket and after close bracket
-        if (c == ' ') continue;
+        if (c == ' ') {
+            if (_found_spaces == 0) {
+                note("Spaces were found in expression");
+                _found_spaces = 1;
+            }
+            continue; 
+        }
 
+        if (ISOP(c) && ISOP(*(p+1))) {
+            char n = *(p+1);
+            if ((c == SUB && n == SUB) || (c == ADD && n == ADD)) {
+                p++;
+                continue;
+            } else if ((c == ADD && n == SUB) || (c == SUB && n == ADD)) {
+                *q++ = SUB;
+                p++;
+                continue;
+            }
+            error("Invalid expression");
+        }
+        
+        // append * before open bracket and after close bracket
         if (c == OPEN_BRACKET && ISDIGIT(*(p-1))) {
+            if(*(p+1) == CLOSE_BRACKET) {
+                warn("Invalid Syntax (auto-fix)");
+                p++;
+                continue;
+            }
+
             *q++ = MUL;
             *q++ = c;
+            char* end = end_brackets(p);
+            if (end == NULL) {
+                warn('Brackets are not balanced (auto-filling)');
+                brackets_fill_num++;
+            }
             continue;
         }
         else if (c == CLOSE_BRACKET && ISDIGIT(*(p+1))) {

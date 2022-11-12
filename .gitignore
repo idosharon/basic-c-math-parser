@@ -1,4 +1,3 @@
 /.idea
 /.vscode
-/main.o
-/parser.o
+*.o
