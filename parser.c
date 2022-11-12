@@ -33,7 +33,6 @@ char* end_brackets(char* str)
         if (score < 0) return NULL;
         if (score == 0) break;
     }
-    // printf("str: %s score: %d\n", str, score);
     return (score == 0) ? str : NULL;
 }
 Node* exp_to_tree(char* str)
@@ -86,19 +85,7 @@ Node* exp_to_tree(char* str)
                 strtonode(node, start, (c == '\0') ? temp : end);
                 return node;
             }
-            // printf("str: %s\n", strndup(start+1, end-start-2));
             return exp_to_tree(strndup(start+1, end-start-2));
-            
-            // if (ISOP(c))
-            // {
-            //     node->op = c;
-            //     printf("%s %c %s\n", strndup(start, p-start),c, strdup(p+1));
-            //     node->left = exp_to_tree(strndup(start, p-start));
-            //     node->right = exp_to_tree(strdup(p+1));
-            //     return node;
-            // } else {
-                
-            // }
         }
     };
     return node;
