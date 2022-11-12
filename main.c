@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "parser.h"
+#include "preprocess.h"
 
 int main(int argc, char **argv) {
 	// get expression from command line
