@@ -81,8 +81,9 @@ Node* exp_to_tree(char* str)
             end++;
             if (ISOP(*(end))) {
                 char* temp = end;
+                p = end+1;
                 for (; (c = *p) != '\0' && !ISOP(c); p++);
-                strtonode(node, start, (c == '\0') ? temp : end);
+                strtonode(node, start, (c == '\0') ? temp : p);
                 return node;
             }
             return exp_to_tree(strndup(start+1, end-start-2));
