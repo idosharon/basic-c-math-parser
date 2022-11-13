@@ -20,6 +20,7 @@ char* preprocess(char* exp) {
         if (ISOP(c) && ISOP(*(p+1))) {
             char n = *(p+1);
             if ((c == SUB && n == SUB) || (c == ADD && n == ADD)) {
+                *q++ = ADD;
                 p++;
                 continue;
             } else if ((c == ADD && n == SUB) || (c == SUB && n == ADD)) {
