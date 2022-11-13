@@ -16,3 +16,11 @@
 char* end_brackets(char* str);
 
 typedef struct Node Node;
+
+// TODO: create expression struct
+// typedef struct Expression {
+//     char* exp;
+//     Node* root;
+
+//     Expression(char* exp);
+// } Expression;

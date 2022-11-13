@@ -26,6 +26,20 @@ void strtonode(Node* node, char* str, char* p)
     node->left = exp_to_tree(left);
     node->right = exp_to_tree(right);
 }
+
+char* search_higher_op(char* p) {
+    // search for higher operator
+    char c;
+    for (; (c = *(++p)) != '\0' && !(c == ADD || c == SUB); ) {
+        // skip brackets
+        if (c == OPEN_BRACKET) {
+            p = end_brackets(p);
+            if (p == NULL) return NULL;
+        }
+    };
+    return p;
+}
+
 char* end_brackets(char* str)
 {
     int score = 0;
@@ -62,32 +76,22 @@ Node* exp_to_tree(char* str)
         {
             // skip sign
             if (ISOP(*(p+1))) p++;
-            // search for higher operator
-            for (; (c = *(++p)) != '\0' && !(c == ADD || c == SUB); ) {
-                // skip brackets
-                if (c == OPEN_BRACKET) {
-                    p = end_brackets(p);
-                    if (p == NULL) return NULL;
-                }
-            };
+            c = *(p = search_higher_op(p));
             // if found higher operator then parse it else parse current operator
             strtonode(node, str, (c == '\0') ? start : p);
             return node;
         } else if (c == OPEN_BRACKET) {
-            char* end = end_brackets(p);
+            p = end_brackets(p);
+            if (p == NULL) error("Brackets are not balanced");
             
-            if (end == NULL) {
-                error("Brackets are not balanced");
-            }
-            
-            end++;
-            if (ISOP(*(end))) {
-                char* temp = end;
-                for (; (c = *temp) != '\0' && !(c == ADD || c == SUB); temp++);
-                strtonode(node, start, (c == '\0') ? end : temp);
+            p++;
+            if (ISOP(*(p))) {
+                char* temp = p;
+                c = *(p = search_higher_op(p));
+                strtonode(node, start, (c == '\0') ? temp : p);
                 return node;
             }
-            return exp_to_tree(strndup(start+1, end-start-2));
+            return exp_to_tree(strndup(start+1, p-start-2));
         }
     };
     return node;
@@ -101,6 +105,7 @@ double parse_tree(Node* node)
         return atof(node->exp);
     double left = parse_tree(node->left);
     double right = parse_tree(node->right);
+    printf("%.2f %c %.2f\n", left, node->op, right);
     switch (node->op)
     {
         case ADD:

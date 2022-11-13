@@ -1,7 +1,6 @@
 #include "preprocess.h"
 
 char* preprocess(char* exp) {
-    status("Preprocessing expression");
     char* p = exp;
     char* q = (char*)malloc(strlen(exp) + 1);
     char* _str = q;
@@ -31,24 +30,28 @@ char* preprocess(char* exp) {
             error("Invalid expression");
         }
         
-        // append * before open bracket and after close bracket
-        if (c == OPEN_BRACKET && ISDIGIT(*(p-1))) {
-            if(*(p+1) == CLOSE_BRACKET) {
-                warn("Invalid Syntax (auto-fix)");
-                p++;
-                continue;
-            }
-
-            printf("[Warning] Missing oporator before bracket (inserting default oporator: %c)\n", DEFAULT);
-            *q++ = DEFAULT;
-            *q++ = c;
+        if (c == OPEN_BRACKET) {
             char* end = end_brackets(p);
             if (end == NULL) {
-                warn("Brackets are not balanced (auto-filling)");
+                warn("Brackets are not balanced (auto-filling at end)");
                 brackets_fill_num++;
-            } 
-            continue;
+            }
+
+            // append * before open bracket and after close bracket
+            if (ISDIGIT(*(p-1))) {
+                if(*(p+1) == CLOSE_BRACKET) {
+                    warn("Invalid Syntax (auto-fix)");
+                    p++;
+                    continue;
+                }
+
+                printf("[Warning] Missing oporator before bracket (inserting default oporator: %c)\n", DEFAULT);
+                *q++ = DEFAULT;
+                *q++ = c;
+                continue;
+            }
         }
+        
         else if (c == CLOSE_BRACKET && ISDIGIT(*(p+1))) {
             printf("[Warning] Missing oporator after bracket (inserting default oporator: %c)\n", DEFAULT);
             *q++ = c;
@@ -57,6 +60,9 @@ char* preprocess(char* exp) {
         }
         *q++ = c;
     }
+    for (short int i = 0; i < brackets_fill_num; i++)
+        *q++ = ')';
+    
     *q = '\0';
     return _str;
 }
