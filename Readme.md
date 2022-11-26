@@ -14,7 +14,7 @@ make
 parse "EXPRESSION"
 ```
 
-#### create command
+#### add command to path
 ```bash
-alias parse="PARSE_EXEC_FULL_PATH"
+export PATH="{PARSE_EXEC_FULL_PATH}:$PATH"
 ```
